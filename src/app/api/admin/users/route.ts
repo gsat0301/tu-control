@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 async function requireAdmin() {
   const session = await auth();
   if (!session?.user || session.user.role !== 'admin') {

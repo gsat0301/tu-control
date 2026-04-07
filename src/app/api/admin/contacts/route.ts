@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 async function requireAdmin() {
   const session = await auth();
   if (!session?.user || session.user.role !== 'admin') return null;
