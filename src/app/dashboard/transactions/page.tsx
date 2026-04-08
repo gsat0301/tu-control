@@ -2,6 +2,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { formatCurrency, formatDate, getTransactionTypeColor, getTransactionTypeLabel } from '@/lib/utils';
 import { DeleteTransactionButton } from '@/components/DeleteTransactionButton';
+import TransactionFilters from '@/components/TransactionFilters'; // <-- Importamos los filtros
 import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -69,51 +70,14 @@ export default async function TransactionsPage({
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="card p-4">
-        <div className="flex flex-wrap gap-3">
-          <div>
-            <label className="label text-xs">Tipo</label>
-            <form method="GET">
-              <select
-                name="type"
-                defaultValue={searchParams.type ?? ''}
-                onChange={(e) => {
-                  const url = new URL(window.location.href);
-                  if (e.target.value) url.searchParams.set('type', e.target.value);
-                  else url.searchParams.delete('type');
-                  window.location.href = url.toString();
-                }}
-                className="input text-sm py-2"
-              >
-                <option value="">Todos</option>
-                <option value="income">Ingresos</option>
-                <option value="expense">Gastos</option>
-                <option value="saving">Ahorros</option>
-              </select>
-            </form>
-          </div>
-          <div>
-            <label className="label text-xs">Portafolio</label>
-            <select
-              defaultValue={searchParams.portfolio ?? ''}
-              onChange={(e) => {
-                const url = new URL(window.location.href);
-                if (e.target.value) url.searchParams.set('portfolio', e.target.value);
-                else url.searchParams.delete('portfolio');
-                // @ts-ignore
-                window.location.href = url.toString();
-              }}
-              className="input text-sm py-2"
-            >
-              <option value="">Todos</option>
-              {portfolios.map((p) => (
-                <option key={p.id} value={p.id}>{p.name}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
+      {/* AQUÍ INYECTAMOS NUESTRO COMPONENTE DE CLIENTE 
+        Y le pasamos los datos que trajimos del servidor
+      */}
+      <TransactionFilters
+        portfolios={portfolios}
+        defaultType={searchParams.type ?? ''}
+        defaultPortfolio={searchParams.portfolio ?? ''}
+      />
 
       {/* Table */}
       <div className="card p-0 overflow-hidden">
