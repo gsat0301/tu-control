@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Wallet, User, Mail, MessageSquare, CheckCircle, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
+// Importamos el componente de Turnstile
+import { Turnstile } from '@marsidev/react-turnstile';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -18,6 +20,8 @@ type ContactForm = z.infer<typeof contactSchema>;
 export default function ContactPage() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  // Estado para guardar el token de Turnstile
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const {
     register,
@@ -29,14 +33,27 @@ export default function ContactPage() {
   });
 
   const onSubmit = async (data: ContactForm) => {
+    //Validación antes de hacer la petición
+    if (!turnstileToken) {
+      setStatus('error');
+      setErrorMsg('Por favor, completa la verificación de seguridad (anti-bot).');
+      return;
+    }
+
     setStatus('loading');
     setErrorMsg('');
 
     try {
+      // Combinamos la "data" (nombre, email, mensaje) y el "turnstileToken"
+      const payload = {
+        ...data,
+        turnstileToken: turnstileToken,
+      };
+
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload), // Enviamos el payload combinado
       });
 
       if (!res.ok) {
@@ -46,6 +63,8 @@ export default function ContactPage() {
 
       setStatus('success');
       reset();
+      // Limpiamos el token al terminar
+      setTurnstileToken(null);
     } catch (err) {
       setStatus('error');
       setErrorMsg(err instanceof Error ? err.message : 'Error inesperado');
@@ -143,7 +162,7 @@ export default function ContactPage() {
                     <textarea
                       id="message"
                       rows={5}
-                      placeholder="Cuéntame un poco sobre ti y cómo usarás la app..."
+                      placeholder="Cuéntame cómo usarás la app... Tambien puedes dejarme algun metodo de contacto adicional y que contraseña te gustaria para tu primer acceso"
                       className={`input pl-10 resize-none ${errors.message ? 'input-error' : ''}`}
                       {...register('message')}
                     />
@@ -151,11 +170,25 @@ export default function ContactPage() {
                   {errors.message && <p className="mt-1.5 text-xs text-red-400">{errors.message.message}</p>}
                 </div>
 
+                {/* Renderizamos el componente de Cloudflare Turnstile */}
+                <div className="flex justify-center w-full my-4">
+                  <Turnstile
+                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    onError={() => {
+                      setStatus('error');
+                      setErrorMsg('Error al cargar la verificación anti-bot.');
+                    }}
+                    onExpire={() => setTurnstileToken(null)}
+                  />
+                </div>
+
                 <button
                   type="submit"
                   id="contact-submit"
-                  disabled={status === 'loading'}
-                  className="btn-primary w-full justify-center btn-lg"
+                  //desactivar boton si no hay token
+                  disabled={status === 'loading' || !turnstileToken}
+                  className="btn-primary w-full justify-center btn-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {status === 'loading' ? (
                     <>
