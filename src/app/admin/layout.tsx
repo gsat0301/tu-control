@@ -5,6 +5,8 @@ import { Wallet, Users, CheckSquare, ArrowLeft } from 'lucide-react';
 import { signOut } from '@/auth';
 import type { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = { title: 'Panel Admin' };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

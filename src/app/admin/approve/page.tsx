@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, Clock, Loader2, Mail, User, MessageSquare } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
+export const dynamic = 'force-dynamic';
+
 interface ContactRequest {
   id: string;
   name: string;
@@ -78,11 +80,10 @@ export default function AdminApprovePage() {
           <button
             key={tab.key}
             onClick={() => setFilter(tab.key)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              filter === tab.key
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${filter === tab.key
                 ? 'bg-brand-500/20 text-brand-400 border border-brand-500/50'
                 : 'text-text-muted hover:text-text-secondary bg-surface-muted'
-            }`}
+              }`}
           >
             {tab.label}
           </button>

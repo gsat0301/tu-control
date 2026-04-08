@@ -7,6 +7,8 @@ import { z } from 'zod';
 import { Plus, X, Loader2, UserCheck, UserX, Star, Trash2 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
+export const dynamic = 'force-dynamic';
+
 const createUserSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
