@@ -7,6 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2, Plus, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 const passwordSchema = z.object({
   currentPassword: z.string().min(6, 'Requerido'),
   newPassword: z.string().min(8, 'Mínimo 8 caracteres'),
@@ -156,11 +158,10 @@ export default function SettingsPage() {
         <h2 className="text-base font-semibold text-text-primary mb-4">Seguridad</h2>
 
         {msg && (
-          <div className={`flex items-center gap-2 p-3 rounded-xl text-sm mb-4 ${
-            msg.type === 'success'
+          <div className={`flex items-center gap-2 p-3 rounded-xl text-sm mb-4 ${msg.type === 'success'
               ? 'bg-brand-500/10 border border-brand-500/25 text-brand-400'
               : 'bg-red-500/10 border border-red-500/25 text-red-400'
-          }`}>
+            }`}>
             {msg.type === 'success'
               ? <CheckCircle className="w-4 h-4" />
               : <AlertCircle className="w-4 h-4" />

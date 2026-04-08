@@ -4,6 +4,8 @@ import { formatCurrency, formatDate, getTransactionTypeColor, getTransactionType
 import { DeleteTransactionButton } from '@/components/DeleteTransactionButton';
 import type { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = { title: 'Transacciones' };
 
 export default async function TransactionsPage({

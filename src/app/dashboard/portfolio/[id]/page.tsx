@@ -8,6 +8,8 @@ import { TrendingUp, TrendingDown, PiggyBank, Pencil } from 'lucide-react';
 import { DeleteTransactionButton } from '@/components/DeleteTransactionButton';
 import type { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 interface Props {
   params: { id: string };
 }

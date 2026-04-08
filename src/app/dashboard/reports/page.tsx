@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { FileDown, FileSpreadsheet, Loader2 } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default function ReportsPage() {
   const [generatingPdf, setGeneratingPdf] = useState(false);
   const [generatingExcel, setGeneratingExcel] = useState(false);

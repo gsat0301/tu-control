@@ -5,6 +5,8 @@ import { SavingsChart } from '@/components/charts/DashboardCharts';
 import { PiggyBank } from 'lucide-react';
 import type { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = { title: 'Ahorros' };
 
 export default async function SavingsPage() {
