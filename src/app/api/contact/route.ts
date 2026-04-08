@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import nodemailer from 'nodemailer';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const contactSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),

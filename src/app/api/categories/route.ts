@@ -3,6 +3,8 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const categorySchema = z.object({
   name: z.string().min(1),
   icon: z.string().default('📁'),

@@ -3,6 +3,8 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const transactionSchema = z.object({
   amount: z.number().positive('El monto debe ser positivo'),
   description: z.string().min(1, 'La descripción es requerida'),
