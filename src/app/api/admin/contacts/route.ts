@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs'; // 1️⃣ Evita que Vercel colapse por importar auth() (que usa bcrypt)
 
 async function requireAdmin() {
   const session = await auth();
@@ -10,7 +11,8 @@ async function requireAdmin() {
   return session;
 }
 
-export async function GET() {
+// 2️⃣ Agregamos "_req: NextRequest" para obligar a Next.js a tratarlo como dinámico
+export async function GET(_req: NextRequest) {
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
 
