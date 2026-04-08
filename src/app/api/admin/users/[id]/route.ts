@@ -5,8 +5,7 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
-
-
+export const runtime = 'nodejs'; // 1️⃣ Forzamos el entorno Node para que bcrypt no explote en el build
 
 async function requireAdmin() {
   const session = await auth();
@@ -25,8 +24,12 @@ const updateUserSchema = z.object({
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  // 2️⃣ Tipamos params como una Promesa
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  // 3️⃣ Hacemos await a los params antes de usarlos
+  const { id } = await params;
+
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
 
@@ -40,7 +43,7 @@ export async function PUT(
     }
 
     const user = await prisma.user.update({
-      where: { id: params.id },
+      where: { id }, // Usamos el id que extrajimos arriba
       data: updateData,
       select: { id: true, email: true, name: true, role: true, isPremium: true, isActive: true },
     });
@@ -56,17 +59,21 @@ export async function PUT(
 
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  // 2️⃣ Igual aquí para el DELETE
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  // 3️⃣ Hacemos await
+  const { id } = await params;
+
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
 
   // No permitir borrar el propio admin
-  if (params.id === session.user.id) {
+  if (id === session.user.id) {
     return NextResponse.json({ error: 'No puedes eliminar tu propia cuenta' }, { status: 400 });
   }
 
-  await prisma.user.delete({ where: { id: params.id } });
+  await prisma.user.delete({ where: { id } });
 
   return NextResponse.json({ success: true });
 }
